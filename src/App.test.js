@@ -42,7 +42,7 @@ test("should render the heading", async () => {
     </QueryClientProvider>
   )
 
-  await waitForElementToBeRemoved(await screen.findByRole("spinbutton"))
+  await waitForElementToBeRemoved(await screen.findAllByRole("spinbutton"))
 
   const heading = screen.getByRole("heading", { name: "Title" })
   expect(heading).toBeInTheDocument()
