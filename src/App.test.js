@@ -17,7 +17,6 @@ const response = [
 ]
 
 const urlPosts = "https://jsonplaceholder.typicode.com/posts"
-const urlTodos = "https://jsonplaceholder.typicode.com/todos"
 
 const server = setupServer()
 
@@ -32,9 +31,8 @@ afterEach(() => {
 })
 afterAll(() => server.close())
 
-test("should render the heading", async () => {
+test("should render a heading", async () => {
   server.use(rest.get(urlPosts, (req, res, ctx) => res(ctx.json(response))))
-  server.use(rest.get(urlTodos, (req, res, ctx) => res(ctx.json(response))))
 
   render(
     <QueryClientProvider client={queryClient}>
@@ -42,7 +40,7 @@ test("should render the heading", async () => {
     </QueryClientProvider>
   )
 
-  await waitForElementToBeRemoved(await screen.findAllByRole("spinbutton"))
+  await waitForElementToBeRemoved(await screen.findAllByTestId("abc"))
 
   const heading = screen.getByRole("heading", { name: "Title" })
   expect(heading).toBeInTheDocument()

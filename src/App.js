@@ -1,7 +1,6 @@
 import React, { memo } from "react"
-import { useQueries, QueryClient, QueryClientProvider } from "react-query"
+import { useQuery, QueryClient, QueryClientProvider } from "react-query"
 import { ReactQueryDevtools } from "react-query/devtools"
-import { ErrorBoundary } from "react-error-boundary"
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -11,24 +10,12 @@ export const queryClient = new QueryClient({
   },
 })
 
-const FallbackComponent = ({ error, resetErrorBoundary }) => {
-  return (
-    <div role="alert">
-      <p>Something went wrong:</p>
-      <pre>{error.message}</pre>
-      <button onClick={resetErrorBoundary}>Try again</button>
-    </div>
-  )
-}
-
 export const App = () => {
   return (
-    <ErrorBoundary FallbackComponent={FallbackComponent}>
-      <QueryClientProvider client={queryClient}>
-        <Fetch />
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <Fetch />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }
 
@@ -49,20 +36,14 @@ const Fetch = () => {
     return response.json()
   }
 
-  const [
-    { isLoading: isLoadingPosts, data: posts },
-    { isLoading: isLoadingTodos, data: todos },
-  ] = useQueries([
-    { queryKey: "posts", queryFn },
-    { queryKey: "todos", queryFn },
-  ])
+  const { isLoading, data } = useQuery("posts", queryFn)
 
-  if (isLoadingPosts || isLoadingTodos) {
+  if (isLoading) {
     return (
       <>
-        <div role="spinbutton">Loading...</div>
-        <div role="spinbutton">Loading...</div>
-        <div role="spinbutton">Loading...</div>
+        <div data-testid="abc">Loading...</div>
+        <div data-testid="abc">Loading...</div>
+        <div data-testid="abc">Loading...</div>
       </>
     )
   }
@@ -70,8 +51,7 @@ const Fetch = () => {
   return (
     <main>
       <h1>Title</h1>
-      <Data data={posts} />
-      <Data data={todos} />
+      <Data data={data} />
     </main>
   )
 }
